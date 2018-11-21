@@ -2,6 +2,8 @@
 
 Big data is a popular term in the last decades, with 3V characteristic: Volume, Velocity and Variety, the traditional stand-alone machine environment may cost months or years to finish a simple big data job. The research and industry have post and develop a complete solution for this, from data collection, storage and processing, the developing and evolution are happening with the development of the real-world requirements. 
 
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/intro.jpg" style="zoom:80%" />
+
 Especially, in the big data analytics area, with the Google MapReduce purposed, which has had a far-ranging impact on the distributed computing industry, it is built on the simple concept of mapping and reducing big data, the developer and easily overcome the massive data processing difficult. The true value of MapReduce lies with its ability to run these processes in parallel on commodity computers while balancing disk, CPU and I/O. However, the MapReduce have several fatal defects, which makes the system cannot run efficiently on particular jobs. 
 
 The first shortcoming is the intermediate data between different MapReduce job was saved into the HDFS persistent storage system, every job has to reload the data from storage again, which will cause significantly latency on data processing. The HaLoop have purposed a caching and indexing between the reducer and next mapper, which benefit a lot in the iterative processing task. The SparkRDD have purposed an In-Memory solution for data processing, with lineage mechanism, it can built lineage to rebuild the lost data after fault occurs. The second shortcoming of MapReduce is the limitation of its design, every processing task will have to been defined as MapReduce jobs, the relationships between different MapReduce job will be extremely complicated, which will directly increase the latency. The Dryad and Flume have developed a more flexible processing system based on DAG, which can significantly optimize multi-stage tasks processing efficiency. The MapReduce is also unable to process the real-time dataflow, the Spark Streaming and Storm have made improvements and enable fast and reliable processing on the massive of streaming data. For the typically graph problem such as the shortest path, PageRank and Minimum cutting, the graph processing system like GraphLab and Pregel are more suitable. 
@@ -40,14 +42,13 @@ A `fine-grained` system running with independent small bits, the information was
 
 A `corarse-grained` system running with large chunks that can be processed independently, the system use a large number of inexpensive processsors, inexpensively interconnected, which can maximizes the number of parts processed per minute.
 
+### Type of Workloads
 
 ## The evolution of distributed analytics systems
 
 ### Hadoop MapReduce
 
 MapReduce is the heart of `Apache Hadoop`, it is a programming paradigm that enables massive scalability across hundreds or thousands of servers in a Hadoop cluster. The term `MapReduce` actually refers to two separate and distinct tasks that Hadoop programs perform. The first is the map job, which takes a set of data and converts it into another set of data, where individual elements are broken down into key/value pairs.
-
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:50%" />
 
 Although Hadoop MapReduce is a powerful tool of big data, there are various limitations will be discussed:
 
@@ -125,7 +126,44 @@ A general research platform called `Husky` is able to help developers implement 
 
 ## Hadoop MapReduce
 
+`MapReduce` is mainly used for parallel processing of large sets of data stored in Hadoop cluster. In the very begining, it is a hypothesis designed by Google to provide parallism, data distribution and fault-tolerance. MapReduce process data in the form of key-value pairs. A KV pair is the mapping element between two linked data items.
+
+For processing large sets of data MR comes into the picture. The developers are able to write MapReduce applications that could be suitable for their bussiness scenarios. The MR work flow undergoes different phases and the end result will be stored in HDFS with replications. JobTracker plays the vital role in scheduling jobs and will keep track of the entire map and reduce jobs. The detail source code can be found in my Github: [hadoop_mapreduce_process_source_code](https://github.com/RickAi/csci5570_survey_paper/blob/master/hadoop_mapreduce_process_source_code.md)
+
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:50%" />
+
+The mapreduce process can be illustrated with core map and reduce process, but some details were hidden, the whole work flow should be: 
+
+Split->Mapper->Partioner->Sort->Combiner->Shuffle->Sort->Reducer->Output
+
+### Mapper Phase
+
+In mapper phase, the input data is going to split into 2 components, key and value. The key is writable and comparable in the processing stage. Value is writable only during the processing stage. In this stage, one block is processed by one mapper at a time, in the mapper, a developer can specify his own bussiness logic as the requirement.
+
+### Partition Phase
+
+The partition module in Hadoop MapReduce also play a very important role to partition the data received from either different mappers or combiners. Partitioner reduce the pressure that builds on reducer and gives more performance. There is a customized partition which can be performed on any relevant data on different basis or conditions.
+
+### Combine Phase
+
+Combiner is also called mini reducer, usually the code is similar to the reducer. When the mapper output is huge amount of data, it will require high network bandwidth. To solve this issuce, the combiner can be placed after mapper to improve performance.
+
+### Shuffle & Sort
+
+After the mapping process, there are shuffle and sorting process on the intermediate data. The data will be stored in the local file system without having any fault tolerance like replications or checkpoint in Hadoop nodes. In detail, Hadoop uses a Round-Robin algorithm to write the intermediate data to the local storage.
+
+### Reducer Phase
+
+When the data was shuffled and sorted, it will be pass as the input to the reducers. In this phase, the developer can define cutomized bussiness code and use writer to writes data from reducer to storage like HDFS. Reducer mainly do operations on data from mapper, and finally will output data named like part-r-0001 etc.
+
 ## HaLoop
+
+HaLoop was developed as a extension of Hadoop which along with processing of data providers a alternative way to perform iterative computation on Hadoop MapReduce..
+
+To support extra features, there are some changes based on Hadoop MapReduce:
+
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:80%" />
+
 
 ## Dryad
 
@@ -139,7 +177,25 @@ A general research platform called `Husky` is able to help developers implement 
 
 ## Husky
 
-## Comparision of distributed analytics systems
+## Related Systems
+
+## Comparison of distributed analytics systems
+
+||Hadoop MapReduce|HaLoop|Dryad|FlumeJava|Spark|Naiad|Ps-Lite|Husky|
+|---|---|---|---|---|---|---|---|---|
+|Year|||||||||
+|Language Support|||||||||
+|Type|Batch|Batch|Batch|Batch|Batch|Streaming|ML||
+|In-Memory Processing|||||||||
+|Data Flow|||||||||
+|Data Processing|||||||||
+|Scalability|||||||||
+|Latency|||||||||
+|Throughput|||||||||
+|Performance|||||||||
+|Fault Tolerance|||||||||
+|Messaging|||||||||
+|Community Adaption|Wide|Selective|Selective|Wide|Wide|Growing|Selective|Selective|
 
 ## Future
 
