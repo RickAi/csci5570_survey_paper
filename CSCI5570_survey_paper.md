@@ -162,10 +162,35 @@ HaLoop was developed as a extension of Hadoop which along with processing of dat
 
 To support extra features, there are some changes based on Hadoop MapReduce:
 
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:80%" />
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/haloop.jpg" style="zoom:80%" />
 
+* Loop Control, Caching, Indexing: New module in HaLoop to support caching.
+* Task Scheduler/Taracker, Job, Task: Based on Hadoop, made some chagnes to communicate with new HaLoop module.
+
+Important features of HaLoop after feasible changes have been made on Hadoop:
+
+1. `Mapper Input Cache`: HaLoop's mapper input cache is able to avoid non-local data reads in mappers during non-initial iterations. In the previous iteration, if a mapper performs the non-local read on an input split, the split will be cached in the local disk of the mapper's physical node. With the loop-aware task scheduling, the map in the later iterations can read these data from local disk, no need to read them from system like HDFS.
+2. `Reducer Input Cache`: HaLoop is able to cache reducer inputs across all reducers and create a local cached data. Also, the reducer inputs are cached before each reduce invocation, so that tuples in the reducer input cache are sorted and grouped by reducer input key.
+3. `Reducer Output Cache`: The reducer output cache stores and indexes most recent local output on each reducer node. The cahce is used to reduce the cost of evaluating fixpoint termination conditions. If the application test the convergence condition by comparing the current iteration output with the previous output, the cache will enable the framework to perform the comparsion in a distributed fashion.
+
+To enable these features, the new API call is simple and esay:
+
+```java
+Job job = new Job();
+
+// Ingore the same process in Hadoop MapReduce
+...
+
+// Trun on the intput/output caching
+job.SetReducerInputCache(true);
+job.SetReducerOutputCache(true);
+
+job.Submit();
+```
 
 ## Dryad
+
+
 
 ## FlumeJava
 
