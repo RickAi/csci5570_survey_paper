@@ -2,7 +2,7 @@
 
 Big data is a popular term in the last decades, with 3V characteristic: Volume, Velocity and Variety, the traditional stand-alone machine environment may cost months or years to finish a simple big data job. The research and industry have post and develop a complete solution for this, from data collection, storage and processing, the developing and evolution are happening with the development of the real-world requirements. 
 
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/intro.jpg" style="zoom:80%" />
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/intro.jpg" style="zoom:70%" />
 
 Especially, in the big data analytics area, with the Google MapReduce purposed, which has had a far-ranging impact on the distributed computing industry, it is built on the simple concept of mapping and reducing big data, the developer and easily overcome the massive data processing difficult. The true value of MapReduce lies with its ability to run these processes in parallel on commodity computers while balancing disk, CPU and I/O. However, the MapReduce have several fatal defects, which makes the system cannot run efficiently on particular jobs. 
 
@@ -20,7 +20,7 @@ The CAP theorem is a tool used to makes system designers aware of the trade-offs
 * `Availability`: Every non-failing node return a response for all read and write requests in a reasonable amount of time.
 * `Partition Tolerant`: The system will continue work in spite of network partitions.
 
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/CAP.png" style="zoom:50%" />
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/CAP.png" style="zoom:40%" />
 
 The CAP theorem categorizes systems into three categories:
 
@@ -61,7 +61,7 @@ Although Hadoop MapReduce is a powerful tool of big data, there are various limi
 
 Hadoop MapReduce is not designed for iterative task like K-Means shown below. Every intermediate data will have not saved into persistent storage, which great increase the latency.
 
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/haloop_kmeans.jpg" style="zoom:50%" />
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/haloop_kmeans.jpg" style="zoom:80%" />
 
 `HaLoop` is a great extension for Hadoop  as it provides support for iterative application. In order to meet these requirement, several main changes that are made in Hadoop to efficiently support iterative data analysis:
 
@@ -130,7 +130,7 @@ A general research platform called `Husky` is able to help developers implement 
 
 For processing large sets of data MR comes into the picture. The developers are able to write MapReduce applications that could be suitable for their bussiness scenarios. The MR work flow undergoes different phases and the end result will be stored in HDFS with replications. JobTracker plays the vital role in scheduling jobs and will keep track of the entire map and reduce jobs. The detail source code can be found in my Github: [hadoop_mapreduce_process_source_code](https://github.com/RickAi/csci5570_survey_paper/blob/master/hadoop_mapreduce_process_source_code.md)
 
-<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:50%" />
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/mapreduce.jpg" style="zoom:80%" />
 
 The mapreduce process can be illustrated with core map and reduce process, but some details were hidden, the whole work flow should be: 
 
@@ -275,7 +275,11 @@ RDDs have the following properties:
 4. `Lazy evalutions`: Same like the defer execution in FlumeJava, the RDDs will not execute directly. Spark will compute RDDs lazily util they are used in the final action, so that it can pipeline the transformations.
 5. `Persistence`: The storage for RDDs can be chosen by the developer, there is options like in-memory sotrage or distributed storage system.
 
-### RDD Lineage Example
+### RDDs Lineage Example
+
+In RDDs Lineage, each RDDs keeps track of its parent, as the example illustrate below.
+
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/spark_rdd_example.jpg" style="zoom:80%" />
 
 ```scala
 var file = spark.textFile("hdfs://...")
@@ -285,7 +289,23 @@ var scoreRDD = words.map{case (k, v) => (v, k)}
 
 ## Naiad
 
+`Naiad` is a genera purpose distributed sytem for executing data parallel, cyclic dataflow programs, it can fulfills all of these requirements and supports a wide variety of high-lvel programming models while achieveing the same performance as specialized system. A computational model called timely dataflow is adopt in Naiad, which provide the basis for an efficient, lightweight coordination mechanism.
+
+### Timely Dataflow
+
+`Dataflow` is a popular abstraction for parallel programming because it is composable. Instead of having to reason about the global state of a system, a dataflow developer is able to concentrate on writing relatively simple vertices that maintain local state and only communicate with other parts of the system through well-defined edges. The MapReduce is a static form of dataflow, with mapper and reducer, two kinds of user-defined vertex. While DryadLINQ and Spark use modern language features for functional programming to build dataflow graphs run on cluster.
+
+
+
+`Timely dataflow` adds timestamps to messages that flow between vertices in the dataflow grpha
+
+
 ## PsLite
+
+### Architecture
+
+<img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/parameter-server.jpg" style="zoom:80%" />
+
 
 ## Husky
 
