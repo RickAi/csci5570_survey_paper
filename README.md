@@ -42,8 +42,6 @@ A `fine-grained` system running with independent small bits, the information was
 
 A `corarse-grained` system running with large chunks that can be processed independently, the system use a large number of inexpensive processsors, inexpensively interconnected, which can maximizes the number of parts processed per minute.
 
-### Type of Workloads
-
 ## The evolution of distributed analytics systems
 
 ### Hadoop MapReduce
@@ -55,7 +53,7 @@ Although Hadoop MapReduce is a powerful tool of big data, there are various limi
 1. `No Caching`: MapReduce cannot cache the intermediate data in memory for a further requirement, which will diminishes the performance such as iterative tasks (These tasks need each output of the previous task be the input of the next stage). HaLoop and SparkRDD have make improvements on this, as them will accesses data from RAM instead of disk, which dramatically improves the performance of iterative algorithms that access the same dataset repeatedly.
 2. `Slow Processing Speed`: When MapReduce process large datasets with different tasks, it will requires a lot of time to perform map and reduce functions, thereby increasing latency. This can be sloved by Dryad and FlumeJava based on the Directed Acyclic Graph (DAG), which use a graph holds the track of operations. DAG will converts logical execution plan to a physical execution plan, which helps in minimize the data shuffling all around and reduce the duration of computations with less data volume, eventuallly increase the efficiency of the process with time.
 3. `No Real-time Data Processing`: Hadoop MapReduce is designed for batch processing, which means it take a huge amount of data in input, process it and produce the output. Altough batch processing is very efficient for processing a high volume of data, but the output can be delayed significantly. Which will cause the MapReduce is not suitable for Real-time data processing. Naiad purposed a timely dataflow computational model, which suppport continuous input and output data. It emphasizes on the velocity of the data and it can be processed within a samll period of time.
-4. `Spupport for Batch Processing Only`: Hadoop MapReduce only support batch processing, it does not able to process streamed, graph and machine learning data, hence overall performance is slower. Husky have purposed a unified framework, which support different kind of tasks with multiply purposes. Which can achieve high performance and support user-firend API among C++, python and Scala.
+4. `Spupport for Batch Processing Only`: Hadoop MapReduce only supports batch processing, it can't handle streaming, graphics, and machine learning data, so overall performance is slow. Husky proposes a unified framework that supports different types of tasks with multiple purposes. This enables high performance and supports the user-firend API in C++, Python and Scala.
 
 ### In-Memory Processing
 
@@ -158,7 +156,7 @@ When the data was shuffled and sorted, it will be pass as the input to the reduc
 
 ## HaLoop
 
-HaLoop was developed as a extension of Hadoop which along with processing of data providers a alternative way to perform iterative computation on Hadoop MapReduce.
+HaLoop was developed as an extension of Hadoop and, along with the processing of data providers, is another way to perform iterative calculations on Hadoop MapReduce.
 
 ### Architecture
 
@@ -173,9 +171,9 @@ To support extra features, there are some changes based on Hadoop MapReduce:
 
 Important features of HaLoop after feasible changes have been made on Hadoop:
 
-1. `Mapper Input Cache`: HaLoop's mapper input cache is able to avoid non-local data reads in mappers during non-initial iterations. In the previous iteration, if a mapper performs the non-local read on an input split, the split will be cached in the local disk of the mapper's physical node. With the loop-aware task scheduling, the map in the later iterations can read these data from local disk, no need to read them from system like HDFS.
-2. `Reducer Input Cache`: HaLoop is able to cache reducer inputs across all reducers and create a local cached data. Also, the reducer inputs are cached before each reduce invocation, so that tuples in the reducer input cache are sorted and grouped by reducer input key.
-3. `Reducer Output Cache`: The reducer output cache stores and indexes most recent local output on each reducer node. The cahce is used to reduce the cost of evaluating fixpoint termination conditions. If the application test the convergence condition by comparing the current iteration output with the previous output, the cache will enable the framework to perform the comparsion in a distributed fashion.
+1. `Mapper Input Cache`: HaLoop's mapper input cache can avoid non-local data reads in the mapper during non-initial iterations. In the last iteration, if the mapper performs a non-local read on the input split, the split is cached on the local disk of the mapper's physical node. Through loop-aware task scheduling, the mappings in subsequent iterations can read this data from the local disk without having to read them from systems such as HDFS.
+2. `Reducer Input Cache`: HaLoop is able to cache the reducer input and create local cache data in all Reducers. In addition, the reducer input is cached before each reduce call, so the tuples in the reducer input cache are sorted and grouped by the reducer input key.
+3. `Reducer Output Cache`: The reducer output cache stores and indexes the latest local output on each reducer node. This cahce is used to reduce the cost of evaluating fixed point termination conditions. If the application tests the convergence condition by comparing the current iteration output to the previous output, the cache will enable the framework to perform the comparison in a distributed manner.
 
 ### Example
 
@@ -196,17 +194,17 @@ job.Submit();
 
 ## Dryad
 
-Dryad is a general purpose, high performance distributed exectuion framework, it build a execution engine that handles many of the difficult problems of creating a large distributed and concurrent application. Dryad support multiple different data transport mechanism between computation vertices and explicit dataflow graph construction and refinement.
+Dryad is a versatile, high-performance distributed exectuion framework that builds an execution engine that can handle many of the challenges of creating large distributed and concurrent applications. Dryad supports many different data transfer mechanisms between computing vertex and explicit data stream graph construction and refinement.
 
 ### Architecture
 
 <img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/dryad_arch.jpg" style="zoom:80%" />
 
-* `Job Manager`: Contains the application specific code to construct the job's communication graph along with library code to schedulethe work across the available resources. All the data is sent directly between vertices, the manager is only responsible for control decisions and is not reponsible for any data transfer.
-* `Name Server`: Exposes the position of each machine node within the network topology, schedule decisions based on locality.
-* `Daemon`: Running on each computing node in the cluster, responsible for create processes on behalf of the job manager.
-* `Vertex`: Executed on the node, the data is sent from the job manager to the daemon, and then executed from the cache. The daemon plays a proxy role, so the Job Manager can communicate with the remote verties and get the state of the computation.
-* `Data Storage`: Dryad use distributed storage system to store output data, the large files can be broken into small pieces that are replicated and distributed across the local disks of the cluster.
+* `Job Manager`: Application-specific code that contains communication diagrams for building jobs and library code to schedule work across available resources. All data is sent directly between the vertices, and the administrator is only responsible for controlling the decision and is not responsible for any data transfer.
+* `Name Server`: The location of each machine node in the network topology is exposed, and decisions are made based on location.
+* `Daemon`: Runs on each compute node in the cluster and is responsible for creating processes on behalf of the job manager.
+* `Vertex`: Executed on the node, data is sent from the job manager to the daemon and then from the cache. The daemon acts as an agent, so the job manager can communicate with remote vertices and get computational state.
+* `Data Storage`: Dryad uses a distributed storage system to store output data, and large files can be divided into small chunks that are replicated and distributed on the cluster's local disk.
 
 ### Dryad Graph
 
@@ -255,25 +253,25 @@ In order to acutally trigger the evaluation of a series of parallel operations, 
 
 ### Optimizer
 
-1. `ParallelDo Fusion`: ParallelDo producer-consumer fusion is essentially function composition or loop fusion. For example, if one parallelDo operation perform function f, then the result is consumed by another parallelDo operation perform function g, the two parallelDo operation will be replaced by a single multi-output that compute both functions.
-2. `MSCR Operation`: The core optimizer in FlumeJava, it transforms combinations of ParallelDo, GroupByKey, CombineValues and Flatten operations into single operation. In order to bridge the gap between these abstraction levels, the optimizer include an intermediate level operation called MSCR opertiaon. This operation can generalizes MapReduce by allowing multiple reduces and combinders.
-3. `Overall Stragegy`:  The optimizer is able to performs a series execution plan with the overall goal, the stragegy inclues: sink flattens, lift combindvalues and fuse MSCRs etc.
+1. `ParallelDo Fusion`: ParallelDo producer-consumer fusion is essentially a combination of functions or loops. For example, if a parallelDo operation executes the function f, the result is consumed by another parallelDo operation execution function g, and the two parallelDo operations are replaced with a single multiple output that computes the two functions.
+2. `MSCR Operation`: The core optimizer in FlumeJava, which converts a combination of ParallelDo, GroupByKey, CombineValues, and Flatten operations into a single operation. To bridge the gap between these levels of abstraction, the optimizer includes an intermediate-level operation called MSCR opertiaon. This operation summarizes MapReduce by allowing multiple reductions and combinations.
+3. `Overall Stragegy`: The optimizer is capable of executing a series of execution plans with overall goals, including: receiving flattening, boosting combined values, and merging MSCR.
 
 ## Spark
 
-`Spark` is general purpose computing platform. At its core, it is a "computational engine" that is responsible for scheduling, distributing and monitoring applications consisting of many computational tasks across many mahines or clusters. Spark extends the popular MapReduce model, by using the DAG processing similar to FlumeJava and Dryad, ensure fast and efficient data processing. The main feature in Spark is the RDDs computations model in memory, which can ensure fast operation and fault tolerance. On the other hand, Spark is designed to cover a wide range of workloads, including batch applications, iterative algorithms, interactive queries and streaming processing. A highly accessible also offering in Spark, which provide simple APIs in Python, Java, Scala and SQL.
+`Spark` is a general-purpose computing platform. Essentially, it is a "computing engine" that is responsible for arranging, distributing, and monitoring applications that consist of many computing tasks in many machines or clusters. Spark extends the popular MapReduce model by using DAG processing similar to FlumeJava and Dryad to ensure fast and efficient data processing. The main feature of Spark is the in-memory RDD calculation model, which ensures fast operation and fault tolerance. Spark, on the other hand, is designed to cover a wide range of workloads, including batch applications, iterative algorithms, interactive queries, and stream processing. A highly accessible product available in Spark that provides simple APIs in Python, Java, Scala and SQL.
 
 ### RDDs
 
-RDD is a read-only, partitioned collection of records, it can only be created through deterministic operations on either data in stable storage or other RDDs.
+RDD is a collection of read-only partition records that can only be created by deterministic operations on stable storage or data in other RDDs.
 
 RDDs have the following properties:
 
-1. `Immuntability and partitioning`: RDDs composed of collection of records which are partitioned. Partition is basic unit of parallelism in a RDD, each partition is one logical division of data, which is immutable and created through some transformations on existing partitions. Immutability helps to achieve consistency in computations.
-2. `Coarse grained operations`: Coarse grained operations are applied to all elements in datasets. For example, a map, filter or groupBy operation which will be performed on all elements in a partition of RDD.
-3. `Fault Tolerance`: Since RDDs are created over a set of transformations, it will log those transformations with Lineage Graph, it can recover the data by re-execute the transformations rather than lost data directly.
-4. `Lazy evalutions`: Same like the defer execution in FlumeJava, the RDDs will not execute directly. Spark will compute RDDs lazily util they are used in the final action, so that it can pipeline the transformations.
-5. `Persistence`: The storage for RDDs can be chosen by the developer, there is options like in-memory sotrage or distributed storage system.
+1. `Immuntability and partitioning`: An RDD consisting of a collection of partition records. Partitioning is the basic unit of parallelism in RDD. Each partition is a logical partition of data that is immutable and created by some transformation on the existing partition. Immutability helps to achieve consistency in calculations.
+2. `Coarse Granular Operations`: A coarse-grained operation is applied to all elements in a dataset. For example, a map, filter, or groupBy operation will be performed on all elements in the RDD partition.
+3. `Fault Tolerance`: Since RDD is created by a set of transformations, it records these transformations using the Lineage Graph, which recovers the data by re-executing the transformation instead of directly losing the data.
+4. `Lazy Evaluation`: As with delayed execution in FlumeJava, RDD does not execute directly. Spark will use them in the final operation to calculate the RDD lazily so that it can manage the transformation.
+5. `Persistence`: Developers can choose RDD storage, with options such as memory storage or distributed storage systems.
 
 ### RDDs Lineage Example
 
@@ -293,11 +291,11 @@ var scoreRDD = words.map{case (k, v) => (v, k)}
 
 ### Timely Dataflow
 
-`Dataflow` is a popular abstraction for parallel programming because it is composable. Instead of having to reason about the global state of a system, a dataflow developer is able to concentrate on writing relatively simple vertices that maintain local state and only communicate with other parts of the system through well-defined edges. The MapReduce is a static form of dataflow, with mapper and reducer, two kinds of user-defined vertex. While DryadLINQ and Spark use modern language features for functional programming to build dataflow graphs run on cluster.
+`Data stream` is a popular abstraction of parallel programming because it is combinable. Data stream developers can focus on writing relatively simple vertices that maintain local state, and can only communicate with other parts of the system through well-defined edges, rather than inferring the global state of the system. MapReduce is a static form of data stream with mapper and reducer, two user-defined vertices. DryadLINQ and Spark use modern language features for functional programming to build data flow diagrams that run on a cluster.
 
 <img src="https://raw.githubusercontent.com/RickAi/csci5570_survey_paper/master/images/timely_dataflow.jpg" style="zoom:80%" />
 
-`Timely dataflow` adds timestamps to messages that flow between vertices in the dataflow graph. For example, in the above simple streaming contxt, vertices A and D are not in any loop context, so timestamps at these vertices have no loop counters. Vertices B, C and F are nested in a single loop context, so their timestamps have a single loop counter. The Ingrees I and Egress E verties sit on the boundary of the loop context, respectively add and remove loop counters to add from timestamps as messages pass through them.
+`Timely dataflow` add timestamps to messages flowing between vertices in a dataflow graph. For example, in the simple stream above, vertices A and D are not in any loop context, so the timestamps for these vertices do not have a loop counter. Vertices B, C, and F are nested within a single loop context, so their timestamps have a single loop counter. Ingrees I and Egress E verties are located at the boundary of the loop context, adding and removing loop counters, respectively, to add from the timestamp as the message passes through them.
 
 ## PsLite
 
@@ -330,7 +328,7 @@ Husky is a open-source, efficient and expressive distributed computing framework
 
 Husky adopt the Master-Slave architecture, a cluster consis of one master and multiple workers, the master is responsible to coordinate the workers, while workers perform actual computations.
 
-In Husky, global objects are partitioned and distributed to different workers based on consistent hashing, which supports dynamic addition and removal of machines without the need of rehashing everything, it is also a important implementation for designing load balancing and fault tolerance.
+At Husky, global objects are partitioned and distributed to different jobs based on a consistent hash that supports dynamic addition and deletion of machines without having to reset everything. It is also an important implementation of design load balancing and fault tolerance.
 
 There are core primitives:
 
@@ -344,9 +342,9 @@ There are other systems designed for solving large scale graph and streaming pro
 
 ### Pregel
 
-`Pregel` is a data flow paradigm and system for large-scale graph processing created at Google to slove problems that are hard or expensive to solve using only the MapReduce framework. The computational paradigm from Pregel for now was adopted by many graph-processing systems, and many popular graph algorithms have been vonverted to the Pregel framework.
+`Pregel` is a data flow paradigm and system for large-scale graphics processing created in Google to solve problems that are difficult or difficult to solve using only the MapReduce framework. Pregel's computational paradigm is now used by many graphics processing systems, and many popular graphics algorithms have been converted to the Pregel framework.
 
-Pregel is essentially a message-passing interface constrained to the egdges of a graph. The idea bebind is to "Think Like A Vertex", algorithms within the Pregel framework are algorithms in which the computation of state for a given node depends only on the states of its neighbours. A Pregel computation take a graph and a corresponding set of vertex states as its inputs. At each iteration, referred to as a superstep, each vertex can send a message to its neighbors and process messages. Thus, each superstep consists of a round of messages being passed between neighbors and a update of the global vertex state.
+Pregel is essentially a message interface that is constrained to the edge of the graph. The idea is to "think like a vertex." An algorithm within the Pregel framework is an algorithm in which state calculations for a given node depend only on the state of its neighbors. The Pregel calculation takes the graph and the corresponding set of vertex states as its inputs. In each iteration, called a superstep, each vertex can send a message to its neighbor and process the message. Thus, each super step includes a round of messages and an update of the global vertex state passed between neighbors.
 
 ### Spark Streaming
 
@@ -362,27 +360,36 @@ Spark streaming is built upon a micro-batch approach. It discretizes the input d
 |Year|2004|2010|2007|2010|2010|2013|2014|2016|
 |Language Support|Java|Java|C#|Java|Scala, Python etc.|C#|C++|C++, Python etc.|
 |Type|Batch|Batch|Batch|Batch|Comprehensive|Streaming|Batch|Comprehensive|
-|In-Memory Support|No|Yes|Yes|Yes|Yes|Yes|Yes|Yes|
+|In-Memory Support|x|✓|✓|✓|✓|✓|✓|✓|
 |Data Flow|MR|MR|DAG|DAG|DAG|Timely|x|x|
-|Scalability|||||||||
-|Latency|||||||||
-|Throughput|||||||||
-|Performance|||||||||
-|Fault Tolerance|Replication|Replication|||||||
-|Messaging|||||||||
+|Latency|High|Middle|Middle|Middle|Middle|Low|Middle|Middle|
+|Performance|Middle|Middle|High|High|High|High|Middle|High|
+|Fault Tolerance|Replication|Replication|Replication|Replication|Lineage|CheckPoint|Replication|Replication|
+|Messaging|TCP|TCP|TCP|TCP|TCP|TCP|ZeroMQ|ZeroMQ|
 |Community Adaption|Wide|Selective|Selective|Wide|Wide|Growing|Selective|Selective|
 
 ## Future
 
+At the 2018 World Artificial Intelligence Summit, Xiao Feng, CEO of China Wanxiang Co., Ltd., said that the blockchain plus encryption algorithm is a perfect match. The Internet is an "information machine" and the blockchain is a "fact machine." The data privacy will be protected, data assets will be secured, data sharing will be motivated and data calculations will be open. And he predict a decentralized distributed system will appear in the next five years.
+
+I also think it is possible, as the blockchian tecenique geting more popular and mature, the  governments and customers start to emphasize on the data privacy, most of the data processing task tend to be executed on the personal devices rather than the centralized servers. As the stand-alone devices' hardware keeping update and the emergence of 5G technology, the computing power and communication bandwidth are guaranteed.
+
+I was an android system developer before I came to CUHK, as I known in the XiaoMi system team, they already start the project which is able to allow offline AI training in the MIUI system.  I highly agree that the decentralized data processing  is the future technique tread, and a new generation decentralized large scale computing system may be built in the next 10 years.
+
 ## Conclusion
+
+In this course survey report, I first list the basics knowledge that will be invovled inthe paper, then I illustrate the disadvantages of the Hadoop MapReduce, I analyzed the advantages of other data processing system such as FlumeJava, Spark and Husky and compare them with Hadoop MapReduce, and how those systems solve the weakness in MapReduce. In the remaining sessions, I introduce the techniques details, question they solved and main ideas behind those distributed computing system. Also, a comprehensive analysis was give among those works. Finally, I give a comparsion table about those systems and give a opinion that the decentralized computing may the future tread of large scale data analytics systems.
 
 ## References
 
 * [MapReduce: Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf)
-* (HaLoop: Efficient Iterative Data Processing on Large Clusters)[https://homes.cs.washington.edu/~magda/papers/bu-vldb10.pdf]
+* [HaLoop: Efficient Iterative Data Processing on Large Clusters](https://homes.cs.washington.edu/~magda/papers/bu-vldb10.pdf)
 * [Dryad: Distributed Data-Parallel Programs from Sequential Building Blocks](https://www.microsoft.com/en-us/research/wp-content/uploads/2007/03/eurosys07.pdf)
 * [FlumeJava: Easy, Efficient Data-Parallel Pipelines](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35650.pdf)
 * [Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing](https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf)
 * [Naiad: A Timely Dataflow System](http://sigops.org/s/conferences/sosp/2013/papers/p439-murray.pdf)
 * [Scaling Distributed Machine Learning with the Parameter Server](https://www.cs.cmu.edu/~muli/file/parameter_server_osdi14.pdf)
 * [Husky: Towards a More Efficient and Expressive Distributed Computing Framework](http://www.vldb.org/pvldb/vol9/p420-yang.pdf)
+* [HALOOP: Iterative MapReduce](https://iterativemapreduce.weebly.com/haloop.html)
+* [An introduction to timely dataflow](https://bigdataatsvc.wordpress.com/2013/09/18/an-introduction-to-timely-dataflow/)
+* [Distributed Algorithms and Optimization, Spring 2015: Lecture 8](https://stanford.edu/~rezab/classes/cme323/S15/notes/lec8.pdf)
